@@ -85,8 +85,6 @@ runs:
         action: ${{ inputs.action }}
         umbrella: ${{ inputs.umbrella-dir }}
         pr: ${{ inputs.pr-number }}
-        actionref: ${{ github.action_ref }}
-        actionrepo: ${{ github.action_repository }}
         customurl: ${{ inputs.custom-url }}
         deployrepo: ${{ inputs.deploy-repository }}
         token: ${{ inputs.token }}
@@ -110,17 +108,8 @@ runs:
 
         echo "emptydir=$(mktemp -d)" >> $GITHUB_ENV
         echo "datetime=$(date '+%Y-%m-%d %H:%M %Z')" >> $GITHUB_ENV
-
-        echo "actionref=$actionref" >> $GITHUB_ENV
-        echo "actionrepo=$actionrepo" >> $GITHUB_ENV
         echo "deployrepo=$deployrepo" >> $GITHUB_ENV
         echo "token=$token" >> $GITHUB_ENV
-      shell: bash
-
-    - name: Determine action version
-      run: |
-        action_version=$("$GITHUB_ACTION_PATH/lib/find-current-git-tag.sh" -p $actionrepo -f $actionref)
-        echo "action_version=$action_version" >> "$GITHUB_ENV"
       shell: bash
 
     - name: Determine auto action
@@ -153,8 +142,6 @@ runs:
         number: ${{ env.pr }}
         message: "\
           [PR Preview Action]\
-          (${{ github.server_url }}/${{ env.actionrepo }})
-          ${{ env.action_version }}
 
           :---:
 
@@ -187,8 +174,6 @@ runs:
         number: ${{ env.pr }}
         message: "\
           [PR Preview Action]\
-          (${{ github.server_url }}/${{ env.actionrepo }})
-          ${{ env.action_version }}
 
           :---:
 
