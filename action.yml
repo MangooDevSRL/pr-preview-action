@@ -63,6 +63,14 @@ inputs:
       all other events. `auto` is the default value.
     required: false
     default: auto
+  pr-number:
+    description: >
+      The number of the PR to comment on when updating the preview
+      deployment. If the initiating event is `pull_request` or
+      `pull_request_target`, defaults to the number of the initiating PR.
+      Required otherwise.
+    required: false
+    default: ${{ github.event.number }}
 
 outputs:
   deployment-url:
@@ -76,7 +84,7 @@ runs:
       env:
         action: ${{ inputs.action }}
         umbrella: ${{ inputs.umbrella-dir }}
-        pr: ${{ github.event.number }}
+        pr: ${{ inputs.pr-number }}
         actionref: ${{ github.action_ref }}
         actionrepo: ${{ github.action_repository }}
         customurl: ${{ inputs.custom-url }}
@@ -142,6 +150,7 @@ runs:
       uses: marocchino/sticky-pull-request-comment@v2
       with:
         header: pr-preview
+        number: ${{ env.pr }}
         message: "\
           [PR Preview Action]\
           (${{ github.server_url }}/${{ env.actionrepo }})
@@ -175,6 +184,7 @@ runs:
       uses: marocchino/sticky-pull-request-comment@v2
       with:
         header: pr-preview
+        number: ${{ env.pr }}
         message: "\
           [PR Preview Action]\
           (${{ github.server_url }}/${{ env.actionrepo }})
