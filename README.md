@@ -78,6 +78,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install and Build
+        if: github.event.action != 'closed' # You might want to skip the build if the PR has been closed
         run: |
           npm install
           npm run build
@@ -232,13 +233,17 @@ the `with` parameter.
   Default: The current repository that the pull request was made in.
 
 - `token`: The token to use for the preview deployment. The default value is
-  fine for most purposes, but if you want to deploy the preview to a different
-  repository (see `deploy-repository` above), you will need to create a
-  [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
-  with permission to access it.
+  fine for deployments to the current repository, but if you want to deploy
+  the preview to a different repository (see `deploy-repository` above), you
+  will need to create a [Personal Access
+  Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+  with permission to access it, and [store it as a
+  secret](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions)
+  in your repository. E.g. you might name that secret 'PREVIEW_TOKEN' and
+  use it with `token: ${{ secrets.PREVIEW_TOKEN }}`.
 
-  Default: GITHUB_TOKEN, which gives the action permission to deploy to the
-  current repository.
+  Default: `${{ github.token }}`, which gives the action permission to
+  deploy to the current repository.
 
 - **(Advanced)** `action`: Determines what this action will do when it is
   executed. Supported values: `deploy`, `remove`, `none`, `auto`.
@@ -284,6 +289,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: npm i && npm run build
+        if: github.event.action != 'closed'
       - uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: .
